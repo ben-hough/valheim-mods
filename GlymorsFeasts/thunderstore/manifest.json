@@ -1,0 +1,10 @@
+{
+  "name": "GlymorsFeasts",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/ben-hough/valheim-mods/tree/main/GlymorsFeasts",
+  "description": "A collection of placeable Valheim feasts by MrGlim. This release includes the Grizzled Platter: a pulled-bear feast with Swamp Dweller's Delight stats, 10 servings, and a steaming board.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2360",
+    "ValheimModding-Jotunn-2.30.2"
+  ]
+}
