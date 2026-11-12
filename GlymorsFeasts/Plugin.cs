@@ -11,11 +11,12 @@ namespace GlymorsFeasts
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid, BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(LegacyPulledBearFeastGuid, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(LegacySerpentBreadBowlFeastGuid, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.benhough.valheim.GlymorsFeasts";
         public const string PluginName = "Glymor's Feasts";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.0";
 
         /// <summary>
         /// GUID of the retired standalone Grizzled Platter / Pulled Bear Feast plugin.
@@ -23,6 +24,13 @@ namespace GlymorsFeasts
         /// </summary>
         public const string LegacyPulledBearFeastGuid = "com.benhough.valheim.PulledBearFeast";
         public const string LegacyPulledBearFeastAssembly = "PulledBearFeast";
+
+        /// <summary>
+        /// GUID of the retired standalone Serpent's Hollow / SerpentBreadBowlFeast plugin.
+        /// Soft-dependency so this plugin loads after it when both are installed.
+        /// </summary>
+        public const string LegacySerpentBreadBowlFeastGuid = "com.benhough.valheim.SerpentBreadBowlFeast";
+        public const string LegacySerpentBreadBowlFeastAssembly = "SerpentBreadBowlFeast";
 
         internal static Plugin Instance { get; private set; }
         internal static BepInEx.Logging.ManualLogSource Log { get; private set; }
@@ -32,7 +40,8 @@ namespace GlymorsFeasts
         /// </summary>
         internal static readonly IFeastDish[] Dishes =
         {
-            new GrizzledPlatterDish()
+            new GrizzledPlatterDish(),
+            new SerpentsHollowDish()
         };
 
         private Harmony _harmony;

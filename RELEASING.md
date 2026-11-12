@@ -17,4 +17,6 @@ git push origin GlymorsFeasts-v1.0.0
 
 Bump the version in the mod's own manifest / project files first, commit, then tag that commit. A GitHub release, if made, uses the same tag name and attaches that mod's Thunderstore package only.
 
+The Thunderstore package README is the mod's own `README.md` (`GlymorsFeasts/thunderstore/thunderstore.toml` points `readme` at `../README.md`). Keep `GlymorsFeasts/thunderstore/README.md` as a copy of that file so the folder and the live Thunderstore page stay in sync. Update the description in both `manifest.json` and `thunderstore.toml` (250 characters or fewer) in the same change.
+
 Thunderstore uploads are done separately from the GitHub release and should only happen after in-game testing.

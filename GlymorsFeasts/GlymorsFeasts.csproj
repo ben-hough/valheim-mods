@@ -6,7 +6,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>GlymorsFeasts</AssemblyName>
     <RootNamespace>GlymorsFeasts</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <ValheimRefs Condition="'$(ValheimRefs)' == ''">$(MSBuildThisFileDirectory)refs</ValheimRefs>
@@ -89,5 +89,9 @@
     <None Include="thunderstore\manifest.json" CopyToOutputDirectory="Never" />
     <None Include="README.md" CopyToOutputDirectory="Never" />
     <EmbeddedResource Include="meshes\*.bin" />
+    <EmbeddedResource Include="meshes\tex\bread_atlas.png" />
+    <EmbeddedResource Include="meshes\tex\jam_atlas.png" />
+    <EmbeddedResource Include="meshes\tex\meat_chunk.png" />
+    <EmbeddedResource Include="Dishes\SerpentsHollow\icon.png" />
   </ItemGroup>
 </Project>
