@@ -6,7 +6,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>GlymorsFeasts</AssemblyName>
     <RootNamespace>GlymorsFeasts</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <ValheimRefs Condition="'$(ValheimRefs)' == ''">$(MSBuildThisFileDirectory)refs</ValheimRefs>

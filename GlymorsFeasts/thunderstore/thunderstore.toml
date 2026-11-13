@@ -5,7 +5,7 @@ schemaVersion = "0.0.1"
 namespace = "MrGlim"
 name = "GlymorsFeasts"
 description = "Placeable Valheim feasts by MrGlim: the Grizzled Platter (pulled bear, Swamp Dweller's Delight stats) and Serpent's Hollow (serpent stew and bread, Sailor's Bounty stats). Ten servings each."
-versionNumber = "1.1.0"
+versionNumber = "1.1.1"
 containsNsfwContent = false
 websiteUrl = "https://github.com/ben-hough/valheim-mods/tree/main/GlymorsFeasts"
 

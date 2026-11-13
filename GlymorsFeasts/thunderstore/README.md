@@ -2,7 +2,7 @@
 
 A collection of placeable Valheim feasts by Ben Hough (MrGlim). Each dish is crafted at the Food Preparation Table, set out with the Serving Tray, and eaten by anyone at the table until the servings are gone.
 
-**This 1.1.0 release includes two dishes:** the **Grizzled Platter** and **Serpent's Hollow**. Further dishes will be added in later versions when they are ready.
+**This 1.1.1 release includes two dishes:** the **Grizzled Platter** and **Serpent's Hollow**. 1.1.1 settles Serpent's Hollow bread onto the picnic board or onto the pieces under it, so rolls no longer hover. Further dishes will be added in later versions when they are ready.
 
 ## Standalone packages (read this if you used either dish before)
 
@@ -130,7 +130,7 @@ If a leftover standalone Grizzled Platter config still has an earlier default re
 ## Compatibility
 
 - Remove the standalone Grizzled Platter and Serpent's Hollow packages before running this mod, as described above.
-- Prefab IDs are stable, so worlds that already have either dish placed keep those pieces when you migrate to Glymor's Feasts 1.1.0.
+- Prefab IDs are stable, so worlds that already have either dish placed keep those pieces when you migrate to Glymor's Feasts 1.1.0 or later.
 - Both dishes use vanilla feast serving sync (ZDO `s_value` and `RPC_OnEat`). Clients need the same prefabs to see the custom visuals.
 - This plugin does not change vanilla feasts. Visual work is done on clones of the Black Forest and Plains boards.
 

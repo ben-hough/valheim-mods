@@ -16,7 +16,7 @@ namespace GlymorsFeasts
     {
         public const string PluginGuid = "com.benhough.valheim.GlymorsFeasts";
         public const string PluginName = "Glymor's Feasts";
-        public const string PluginVersion = "1.1.0";
+        public const string PluginVersion = "1.1.1";
 
         /// <summary>
         /// GUID of the retired standalone Grizzled Platter / Pulled Bear Feast plugin.

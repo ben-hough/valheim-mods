@@ -1,3 +1,8 @@
+## 1.1.1
+
+- Serpent's Hollow: bread no longer hovers. Every roll, jam half, bread bowl, and lid is dropped onto the real picnic-board mesh top at its position, or onto the pieces it is supposed to rest on, with a small tilt when that helps it settle. The 1.1.0 path snapped a loose bounding box to a flat deck height and then added a constant lift, which left gaps under the tilted and stacked rolls (visible from a low side angle). The approved layout is unchanged: round pot centered, jam crescent by the handle, jam in the built-in ramekins.
+- Item drop and attach visuals copy the settled full-stage dish, so they match the placed feast.
+
 ## 1.1.0
 
 - Adds **Serpent's Hollow** to the collection (the finished standalone Serpent's Hollow 1.1.6): a Plains-board feast of Serpent Stew with bread bowls and Queen's Jam. Stats match Sailor's Bounty (45/45 health and stamina, 3 regen, 50 minutes, 10 servings). Default recipe: 2 Serpent Stew, 3 Bread, 2 Queen's Jam, 1 Seafarer's Herbs.

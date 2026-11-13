@@ -228,29 +228,52 @@ namespace GlymorsFeasts
                 slices = new[] { SerpentsHollowLayout.Slice1 };
             }
 
-            PlaceRaw(SerpentsHollowMeshBank.BreadBowl, SerpentsHollowTexBank.BreadMaterial, parent, SerpentsHollowLayout.EmptyBowl, "empty_bowl", snap: true);
-            PlaceRaw(SerpentsHollowMeshBank.BreadLid, SerpentsHollowTexBank.BreadMaterial, parent, SerpentsHollowLayout.Lid, "lid", snap: true);
-
+            SerpentsHollowSettle session = new SerpentsHollowSettle().Init();
+            Material breadMat = SerpentsHollowTexBank.BreadMaterial;
+            session.Place(SerpentsHollowMeshBank.BreadBowl, breadMat, parent, SerpentsHollowLayout.EmptyBowl, "empty_bowl", "empty_bowl", allowTilt: false);
             if (filled)
             {
-                GameObject bowl = PlaceRaw(SerpentsHollowMeshBank.BreadBowl, SerpentsHollowTexBank.BreadMaterial, parent, SerpentsHollowLayout.FilledBowl, "filled_bowl", snap: true);
+                GameObject bowl = session.Place(SerpentsHollowMeshBank.BreadBowl, breadMat, parent, SerpentsHollowLayout.FilledBowl, "filled_bowl", "filled_bowl", allowTilt: false);
                 Mesh bowlStew = stage == Stage.Full ? SerpentsHollowMeshBank.StewBowlFull : SerpentsHollowMeshBank.StewBowlHalf;
                 Mesh bowlChunks = stage == Stage.Full ? SerpentsHollowMeshBank.StewBowlChunksFull : SerpentsHollowMeshBank.StewBowlChunksHalf;
                 if (bowl != null)
                 {
-                    // Stew disc is authored in bowl-local space; use the snapped bowl transform.
+                    // Stew disc is authored in bowl-local space; use the settled bowl transform.
                     PlaceAtTransform(bowlStew, "SerpentStew", bowl.transform, Vector3.zero, Vector3.zero, Vector3.one, "bowl_stew", snap: false);
                     PlaceAtTransform(bowlChunks, SerpentsHollowTexBank.MeatMaterial, bowl.transform, Vector3.zero, Vector3.zero, Vector3.one, "bowl_chunks", snap: false);
                 }
             }
+            session.Place(SerpentsHollowMeshBank.BreadLid, breadMat, parent, SerpentsHollowLayout.Lid, "lid", "lid", allowTilt: true);
 
-            foreach (SerpentsHollowLayout.Pose p in wholes)
+            // Board-sitters first (A, C, D), then stacks / leans (E on D, F on A, B on A).
+            SerpentsHollowLayout.Pose[] wholePoses =
             {
-                PlaceRaw(SerpentsHollowMeshBank.BreadRoll, SerpentsHollowTexBank.BreadMaterial, parent, p, "roll", snap: true);
+                SerpentsHollowLayout.WholeA, SerpentsHollowLayout.WholeC, SerpentsHollowLayout.WholeD,
+                SerpentsHollowLayout.WholeE, SerpentsHollowLayout.WholeF, SerpentsHollowLayout.WholeB
+            };
+            char[] wholeKeys = { 'A', 'C', 'D', 'E', 'F', 'B' };
+            for (int i = 0; i < wholeKeys.Length; i++)
+            {
+                if (!ContainsPose(wholes, wholePoses[i]))
+                {
+                    continue;
+                }
+                session.Place(SerpentsHollowMeshBank.BreadRoll, breadMat, parent, wholePoses[i], "roll", SerpentsHollowSettle.WholeTag(wholeKeys[i]), allowTilt: true);
             }
-            foreach (SerpentsHollowLayout.Pose p in slices)
+
+            SerpentsHollowLayout.Pose[] slicePoses =
             {
-                GameObject slice = PlaceRaw(SerpentsHollowMeshBank.BreadHalf, SerpentsHollowTexBank.BreadMaterial, parent, p, "slice", snap: true);
+                SerpentsHollowLayout.Slice1, SerpentsHollowLayout.Slice3, SerpentsHollowLayout.Slice4,
+                SerpentsHollowLayout.Slice2, SerpentsHollowLayout.Slice6, SerpentsHollowLayout.Slice5
+            };
+            char[] sliceKeys = { '1', '3', '4', '2', '6', '5' };
+            for (int i = 0; i < sliceKeys.Length; i++)
+            {
+                if (!ContainsPose(slices, slicePoses[i]))
+                {
+                    continue;
+                }
+                GameObject slice = session.Place(SerpentsHollowMeshBank.BreadHalf, breadMat, parent, slicePoses[i], "slice", SerpentsHollowSettle.SliceTag(sliceKeys[i]), allowTilt: true);
                 if (slice != null)
                 {
                     PlaceAtTransform(SerpentsHollowMeshBank.JamSmear, SerpentsHollowTexBank.JamSpreadMaterial, slice.transform, new Vector3(0f, SerpentsHollowLayout.SmearLift, 0f), Vector3.zero, Vector3.one, "smear", snap: false);
@@ -261,6 +284,24 @@ namespace GlymorsFeasts
                 PlaceAtMatrix(SerpentsHollowMeshBank.LadleScoop, "FeastMountains", parent, potMatrix, "ladle_scoop");
                 PlaceAtMatrix(SerpentsHollowMeshBank.LadleHandle, SerpentsHollowTexBank.LadleHandleMaterial, parent, potMatrix, "ladle_handle");
             }
+        }
+
+
+        private static bool ContainsPose(SerpentsHollowLayout.Pose[] list, SerpentsHollowLayout.Pose pose)
+        {
+            if (list == null)
+            {
+                return false;
+            }
+            for (int i = 0; i < list.Length; i++)
+            {
+                SerpentsHollowLayout.Pose p = list[i];
+                if (p.Pos == pose.Pos && p.Euler == pose.Euler && Mathf.Abs(p.Scale - pose.Scale) < 1e-6f)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // Place the pot, ladle and inner floor. Returns the snapped local matrix so
@@ -304,14 +345,10 @@ namespace GlymorsFeasts
 
         private static GameObject PlaceRaw(Mesh mesh, Material mat, Transform parent, SerpentsHollowLayout.Pose pose, string name, bool snap)
         {
-            GameObject go = PlaceRaw(mesh, mat, parent, pose.Pos, pose.Euler, Vector3.one * pose.Scale, name, snap);
-            if (go != null && pose.Lift != 0f)
-            {
-                Vector3 p = go.transform.localPosition;
-                p.y += pose.Lift;
-                go.transform.localPosition = p;
-            }
-            return go;
+            // Bread is placed through SerpentsHollowSettle (vertex drop onto the
+            // board or the pieces under it). Do not add pose.Lift on top of a snap:
+            // that was the source of the floating rolls in 1.1.0.
+            return PlaceRaw(mesh, mat, parent, pose.Pos, pose.Euler, Vector3.one * pose.Scale, name, snap);
         }
 
         private static GameObject PlaceRaw(Mesh mesh, string materialPrefab, Transform parent, Vector3 localPos, Vector3 euler, Vector3 scale, string name, bool snap)
