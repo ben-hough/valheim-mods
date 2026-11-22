@@ -1,8 +1,8 @@
 {
   "name": "GlymorsFeasts",
-  "version_number": "1.1.1",
+  "version_number": "1.2.0",
   "website_url": "https://github.com/ben-hough/valheim-mods/tree/main/GlymorsFeasts",
-  "description": "Placeable Valheim feasts by MrGlim: the Grizzled Platter (pulled bear, Swamp Dweller's Delight stats) and Serpent's Hollow (serpent stew and bread, Sailor's Bounty stats). Ten servings each.",
+  "description": "Placeable Valheim feasts by MrGlim: ten dishes, from the Grizzled Platter and Serpent's Hollow to breakfast skillets, a honey-glazed roast, sushi with Sea-God's Favor, and smoked fish. Ten servings each.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2360",
     "ValheimModding-Jotunn-2.30.2"

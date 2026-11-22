@@ -83,7 +83,7 @@ namespace GlymorsFeasts
             {
                 return;
             }
-            _icon = icon;
+            _icon = LoadDishIcon() ?? icon;
             ItemDrop swampFood = FindSwampFood();
             Feast swampFeast = FindPrefab("FeastSwamps")?.GetComponent<Feast>();
 
@@ -200,7 +200,8 @@ namespace GlymorsFeasts
                 }
                 if (src.m_maxStackSize > 0)
                 {
-                    shared.m_maxStackSize = src.m_maxStackSize;
+                    // Feast plates stack to 5 (vanilla feasts report a stack of 1 on some builds).
+                    shared.m_maxStackSize = FallbackStack;
                 }
             }
             else
@@ -443,6 +444,33 @@ namespace GlymorsFeasts
                 return ParseRecipe(GrizzledPlatterConfig.DefaultRecipe);
             }
             return list;
+        }
+
+        private static Sprite LoadDishIcon()
+        {
+            try
+            {
+                byte[] embedded = SerpentsHollowMeshBank.ReadResource("GrizzledPlatter.icon.png");
+                if (embedded == null || embedded.Length == 0)
+                {
+                    embedded = SerpentsHollowMeshBank.ReadResource("Dishes.GrizzledPlatter.icon.png");
+                }
+                if (embedded != null && embedded.Length > 0)
+                {
+                    Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    if (tex.LoadImage(embedded))
+                    {
+                        tex.name = "GrizzledPlatter_Icon";
+                        Plugin.Log.LogInfo("Loaded Grizzled Platter icon from embedded resource.");
+                        return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.LogWarning("Could not load embedded Grizzled Platter icon: " + ex.Message);
+            }
+            return null;
         }
     }
 }

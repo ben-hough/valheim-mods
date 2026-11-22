@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using BepInEx;
@@ -16,7 +18,7 @@ namespace GlymorsFeasts
     {
         public const string PluginGuid = "com.benhough.valheim.GlymorsFeasts";
         public const string PluginName = "Glymor's Feasts";
-        public const string PluginVersion = "1.1.1";
+        public const string PluginVersion = "1.2.0";
 
         /// <summary>
         /// GUID of the retired standalone Grizzled Platter / Pulled Bear Feast plugin.
@@ -36,13 +38,25 @@ namespace GlymorsFeasts
         internal static BepInEx.Logging.ManualLogSource Log { get; private set; }
 
         /// <summary>
-        /// Register additional dishes here when they are ready for release.
+        /// Every dish this plugin registers: the two original feasts plus the 1.2.0 catalog.
+        /// Register additional dishes in BuildDishes / V120Catalog when they are ready for release.
         /// </summary>
-        internal static readonly IFeastDish[] Dishes =
+        internal static readonly IFeastDish[] Dishes = BuildDishes();
+
+        private const string SeaGodsFavorToken = "se_seagodsfavor";
+        private const string SeaGodsFavorName = "Sea-God's Favor";
+        private const string SeaGodsFavorDescToken = "se_seagodsfavor_desc";
+        private const string SeaGodsFavorDesc = "The sea asks less of you. Swim stamina use is reduced.";
+
+        private static IFeastDish[] BuildDishes()
         {
-            new GrizzledPlatterDish(),
-            new SerpentsHollowDish()
-        };
+            IFeastDish[] catalog = V120Catalog.CreateDishes();
+            IFeastDish[] all = new IFeastDish[2 + catalog.Length];
+            all[0] = new GrizzledPlatterDish();
+            all[1] = new SerpentsHollowDish();
+            Array.Copy(catalog, 0, all, 2, catalog.Length);
+            return all;
+        }
 
         private Harmony _harmony;
 
@@ -63,7 +77,7 @@ namespace GlymorsFeasts
 
             _harmony = new Harmony(PluginGuid);
             _harmony.PatchAll();
-            Log.LogInfo(PluginName + " " + PluginVersion + " loaded.");
+            Log.LogInfo(PluginName + " " + PluginVersion + " loaded (" + Dishes.Length + " dishes).");
         }
 
         private void OnDestroy()
@@ -81,6 +95,86 @@ namespace GlymorsFeasts
             {
                 dish.AddLocalization(loc);
             }
+            RegisterSeaGodsFavorTokens();
+        }
+
+        private static void RegisterSeaGodsFavorTokens()
+        {
+            RegisterEnglishToken(SeaGodsFavorToken, SeaGodsFavorName);
+            RegisterEnglishToken(SeaGodsFavorDescToken, SeaGodsFavorDesc);
+        }
+
+        /// <summary>
+        /// Adds an English token through Jotunn and, when the game's Localization instance
+        /// already exists, directly through Localization.AddWord so late lookups resolve too.
+        /// </summary>
+        internal static void RegisterEnglishToken(string key, string value)
+        {
+            string token = (key ?? string.Empty).TrimStart('$');
+            if (token.Length == 0 || string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+            try
+            {
+                CustomLocalization loc = LocalizationManager.Instance.GetLocalization();
+                string language = "English";
+                loc.AddTranslation(language, new Dictionary<string, string> { { token, value } });
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning("Jotunn token " + token + ": " + ex.Message);
+            }
+            TryAddWord(token, value);
+        }
+
+        internal static void TryAddWord(string key, string value)
+        {
+            try
+            {
+                Type type = Type.GetType("Localization, assembly_valheim");
+                if (type == null)
+                {
+                    foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        type = asm.GetType("Localization");
+                        if (type != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (type == null)
+                {
+                    return;
+                }
+                const BindingFlags StaticAny = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+                object instance = null;
+                PropertyInfo prop = type.GetProperty("instance", StaticAny);
+                if (prop != null)
+                {
+                    instance = prop.GetValue(null, null);
+                }
+                if (instance == null)
+                {
+                    FieldInfo field = type.GetField("instance", StaticAny);
+                    if (field != null)
+                    {
+                        instance = field.GetValue(null);
+                    }
+                }
+                if (instance == null)
+                {
+                    return;
+                }
+                MethodInfo addWord = type.GetMethod("AddWord", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                    null, new[] { typeof(string), typeof(string) }, null);
+                addWord?.Invoke(instance, new object[] { key, value });
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning("AddWord " + key + ": " + ex.Message);
+            }
         }
 
         private void OnVanillaPrefabsAvailable()
@@ -97,7 +191,7 @@ namespace GlymorsFeasts
                     }
                     dish.Register(icon);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Log.LogError("Failed to register " + dish.DisplayName + ": " + ex);
                 }
@@ -106,13 +200,14 @@ namespace GlymorsFeasts
 
         private void OnItemsRegistered()
         {
+            RegisterSeaGodsFavorTokens();
             foreach (IFeastDish dish in Dishes)
             {
                 try
                 {
                     dish.ApplyRegisteredStats();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Log.LogError("Failed to apply feast stats for " + dish.DisplayName + ": " + ex);
                 }
@@ -136,7 +231,7 @@ namespace GlymorsFeasts
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Log.LogWarning("Could not load icon.png: " + ex.Message);
             }

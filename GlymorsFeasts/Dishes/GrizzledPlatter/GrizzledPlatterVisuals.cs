@@ -1093,7 +1093,7 @@ namespace GlymorsFeasts
             LogDropPrefab("after", material);
         }
 
-        private static Bounds? MeasureItemVisual(string prefabName)
+        internal static Bounds? MeasureItemVisual(string prefabName)
         {
             GameObject go = GrizzledPlatterDish.FindPrefab(prefabName);
             if (go == null)
@@ -1187,7 +1187,7 @@ namespace GlymorsFeasts
             return Mathf.Abs(b) < 1e-6f ? a : a / b;
         }
 
-        private static void FitDropVisual(Transform visual, Transform space, Bounds? target)
+        internal static void FitDropVisual(Transform visual, Transform space, Bounds? target)
         {
             if (visual == null)
             {

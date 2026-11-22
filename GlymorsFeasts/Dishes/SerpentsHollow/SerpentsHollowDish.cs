@@ -490,7 +490,11 @@ namespace GlymorsFeasts
         {
             try
             {
-                byte[] embedded = SerpentsHollowMeshBank.ReadResource("icon.png");
+                byte[] embedded = SerpentsHollowMeshBank.ReadResource("SerpentsHollow.icon.png");
+                if (embedded == null || embedded.Length == 0)
+                {
+                    embedded = SerpentsHollowMeshBank.ReadResource("Dishes.SerpentsHollow.icon.png");
+                }
                 if (embedded != null && embedded.Length > 0)
                 {
                     Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
